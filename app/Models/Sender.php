@@ -24,6 +24,11 @@ class Sender extends Auth
         'email_verified_at' => 'datetime',
     ];
 
+    public function image(): \Illuminate\Database\Eloquent\Relations\MorphOne
+    {
+        return $this->morphOne(Image::class, 'imageable');
+    }
+
     public function sendEmailVerificationNotification()
     {
         $this->notify(new VerifySenderEmail());

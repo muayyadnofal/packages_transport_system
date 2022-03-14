@@ -7,6 +7,8 @@ use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\VerificationController;
+use App\Http\Controllers\User\SettingsController;
+use App\Http\Controllers\User\UserImageController;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Support\Facades\Route;
 
@@ -20,8 +22,10 @@ Route::post('password/email/{type}',  [ForgetPasswordController::class, 'sendRes
 Route::post('password/code/check', [CodeCheckController::class, 'check']);
 
 
-Route::group(['middleware' => ['auth.guard:traveler', 'protected']], function() {
+Route::group(['middleware' => ['auth.guard:traveler', 'auth.guard:sender', 'protected']], function() {
     Route::post('/logout', [LogoutController::class, 'logout']);
+    Route::patch('/updateProfile', [SettingsController::class, 'updateProfile']);
+    Route::post('/updateProfileImage', [UserImageController::class, 'create']);
 });
 
 // user & admin logout

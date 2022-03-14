@@ -15,6 +15,11 @@ class Auth extends Authenticatable implements JWTSubject, MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    public function image(): \Illuminate\Database\Eloquent\Relations\MorphOne
+    {
+        return $this->morphOne(Image::class, 'imageable');
+    }
+
     public function sendPasswordResetNotification($token) {
         $this->notify(new ResetPassword($token));
     }
