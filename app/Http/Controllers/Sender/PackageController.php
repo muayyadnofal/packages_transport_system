@@ -44,7 +44,7 @@ class PackageController extends Controller
 
         $data = array_merge($request->all(), ['request_id' => $req->id]);
         $package = $this->package->create($data);
-        $this->flight->forceFill(['free_load_amount' => ($flight->free_load_amount - $request->weight)], $id);
+        $this->req->forceFill(['full_weight' => ($req->full_weight + $request->weight)], $id);
         return self::returnData('package', new PackageResource($package), '$package created', 201);
     }
 }

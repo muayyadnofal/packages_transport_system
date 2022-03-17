@@ -40,7 +40,7 @@ class Handler extends ExceptionHandler
     public function register()
     {
         $this->renderable(function (AccessDeniedHttpException $e, $request) {
-            return self::failure('this action is not authorized', 403);
+            return self::failure('this action is unauthorized', 403);
         });
 
         $this->renderable(function (NotFoundHttpException $e, $request) {

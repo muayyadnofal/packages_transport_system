@@ -35,6 +35,21 @@ class FlightPolicy
         return $flight->traveler_id === $traveler->id;
     }
 
+    public function getMyFlightRequests(Traveler $traveler, Flight $flight): bool
+    {
+        return $flight->traveler_id === $traveler->id;
+    }
+
+    public function changeRequestStatus(Traveler $traveler, Flight $flight): bool
+    {
+        return $flight->traveler_id === $traveler->id;
+    }
+
+    public function getRequest(Traveler $traveler, Flight $flight): bool
+    {
+        return $flight->traveler_id === $traveler->id;
+    }
+
     public function restore(User $user, Flight $flight)
     {
         //

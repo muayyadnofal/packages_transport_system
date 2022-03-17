@@ -11,7 +11,6 @@ use App\Http\Controllers\Sender\RequestController;
 use App\Http\Controllers\Traveler\FlightController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\User\UserImageController;
-use Illuminate\Auth\Events\Logout;
 use Illuminate\Support\Facades\Route;
 
 // Route group for guests only
@@ -34,6 +33,11 @@ Route::group(['middleware' => ['auth.guard:traveler', 'protected']], function() 
     Route::post('/traveler/addFlight', [FlightController::class, 'create']);
     Route::patch('/traveler/updateFlight/{id}', [FlightController::class, 'update']);
     Route::delete('/traveler/deleteFlight/{id}', [FlightController::class, 'destroy']);
+
+    // requests
+    Route::get('traveler/requests/{id}', [\App\Http\Controllers\Traveler\RequestController::class, 'getMyFlightRequests']);
+    Route::post('traveler/changeRequestStatus/{id}', [\App\Http\Controllers\Traveler\RequestController::class, 'changeRequestStatus']);
+    Route::get('traveler/request/{id}', [\App\Http\Controllers\Traveler\RequestController::class, 'getRequest']);
 });
 
 // sender Route group

@@ -8,6 +8,7 @@ use App\Http\Resources\Sender\ReqResource;
 use App\Repositories\Contracts\IFlight;
 use App\Repositories\Contracts\IRequest;
 use App\Traits\HttpResponse;
+use Illuminate\Http\Request;
 
 class RequestController extends Controller
 {
@@ -40,7 +41,7 @@ class RequestController extends Controller
         return self::returnData('request', new ReqResource($req), 'my request', 200);
     }
 
-    public function create(ReqRequest $request, $id): \Illuminate\Http\Response
+    public function create(Request $request, $id): \Illuminate\Http\Response
     {
         $flight = $this->flight->find($id);
         $data = array_merge($request->all(), ['sender_id' => auth()->user()->id, 'flight_id' => $flight->id]);

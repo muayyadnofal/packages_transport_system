@@ -24,8 +24,8 @@ class ReqResource extends JsonResource
             'sending_time' => $this->created_at->format('Y-m-d'),
             'acceptance_Time' => $this->acceptance_Time,
             'fail_Time' => $this->fail_Time,
+            'packages' => PackageResource::collection($packages),
             'flight' => new FlightResource($flight),
-            'packages' => PackageResource::collection($packages)
         ];
     }
 }

@@ -13,6 +13,6 @@ class Package extends Model
 
     public function request(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Request::class, 'request_id');
+        return $this->belongsTo(Request::class);
     }
 }
