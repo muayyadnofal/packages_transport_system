@@ -9,6 +9,9 @@ use App\Models\ResetCodePassword;
 use App\Models\Sender;
 use App\Models\Traveler;
 use App\Models\User;
+use App\Repositories\Contracts\IResetCodePassword;
+use App\Repositories\Contracts\ISender;
+use App\Repositories\Contracts\ITraveler;
 use App\Traits\HttpResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -18,41 +21,37 @@ class ForgetPasswordController extends Controller
 {
     use HttpResponse;
 
-    private $request;
+    private $traveler, $sender, $reset;
+
+    public function __construct(ISender $sender, ITraveler $traveler, IResetCodePassword $reset)
+    {
+        $this->sender = $sender;
+        $this->traveler = $traveler;
+        $this->reset = $reset;
+    }
 
     public function sendResetLink(MailRequest $request, $type): \Illuminate\Http\Response
     {
-        $this->request = $request;
-
         if($type == 'traveler') {
-            return $this->sendResetLinkEmail(Traveler::class);
+            $this->traveler->findWhereFirst('email', $request->all());
         }
 
         else if($type == 'sender') {
-            return $this->sendResetLinkEmail(Sender::class);
+            $this->sender->findWhereFirst('email', $request->all());
         }
 
-        return self::failure('page not found', 404);
-    }
-
-    private function sendResetLinkEmail($model): \Illuminate\Http\Response
-    {
-        if (! $model::where('email', $this->request->all())->first()) {
-            return self::failure('email not found', 404);
-        }
-
-        $data['email'] = $this->request->email;
+        $data['email'] = $request->email;
         // Delete all old code that user send before.
-        ResetCodePassword::where('email', $this->request->all())->delete();
+        $this->reset->findAndDelete('email', $request->all());
 
         // Generate random code
         $data['code'] = mt_rand(100000, 999999);
 
         // Create a new code
-        $codeData = ResetCodePassword::create($data);
+        $codeData = $this->reset->create($data);
 
         // Send email to user
-        Mail::to($this->request->email)->send(new SendCodeResetPassword($codeData->code));
+        Mail::to($request->email)->send(new SendCodeResetPassword($codeData->code));
 
         return self::success('password code sent successfully', 200);
     }

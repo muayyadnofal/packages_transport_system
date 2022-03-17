@@ -6,6 +6,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\VerificationController;
+use App\Http\Controllers\Sender\PackageController;
+use App\Http\Controllers\Sender\RequestController;
 use App\Http\Controllers\Traveler\FlightController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\User\UserImageController;
@@ -28,9 +30,10 @@ Route::group(['middleware' => ['auth.guard:traveler', 'protected']], function() 
     Route::get('/getProfile/traveler', [UserController::class, 'getMyInfo']);
 
     // flights
+    Route::get('/traveler/getFlights', [FlightController::class, 'getMyFlights']);
     Route::post('/traveler/addFlight', [FlightController::class, 'create']);
-    Route::patch('/traveler/updateFlight', [FlightController::class, 'update']);
-    Route::delete('/traveler/deleteFlight', [FlightController::class, 'delete']);
+    Route::patch('/traveler/updateFlight/{id}', [FlightController::class, 'update']);
+    Route::delete('/traveler/deleteFlight/{id}', [FlightController::class, 'destroy']);
 });
 
 // sender Route group
@@ -38,6 +41,15 @@ Route::group(['middleware' => ['auth.guard:sender', 'protected']], function() {
     Route::post('/logout', [LogoutController::class, 'logout']);
     Route::post('/updateProfileImage/sender', [UserImageController::class, 'create']);
     Route::get('/getProfile/sender', [UserController::class, 'getMyInfo']);
+
+    // Requests
+    Route::get('/sender/getRequest/{id}', [RequestController::class, 'getRequest']);
+    Route::get('/sender/getRequests', [RequestController::class, 'getMyRequests']);
+    Route::post('/sender/addRequest/{id}', [RequestController::class, 'create']);
+    Route::delete('/sender/deleteRequest/{id}', [RequestController::class, 'destroy']);
+
+    // packages
+    Route::post('/sender/addPackage/{id}', [PackageController::class, 'create']);
 
     // flights
     Route::get('/sender/getFlights', [FlightController::class, 'index']);

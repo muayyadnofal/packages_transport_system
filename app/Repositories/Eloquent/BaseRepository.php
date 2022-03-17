@@ -3,10 +3,11 @@
 namespace App\Repositories\Eloquent;
 
 use App\Repositories\Contracts\IBase;
+use App\Repositories\Criteria\ICriteria;
 use App\Traits\HttpResponse;
-use Exception;
+use Illuminate\Support\Arr;
 
-abstract class BaseRepository implements IBase
+abstract class BaseRepository implements IBase, ICriteria
 {
     use HttpResponse;
 
@@ -15,6 +16,17 @@ abstract class BaseRepository implements IBase
     public function __construct()
     {
         $this->model = $this->getModelClass();
+    }
+
+    public function withCriteria(...$criteria): BaseRepository
+    {
+        $criteria = Arr::flatten($criteria);
+
+        foreach ($criteria as $criterion) {
+            $this->model = $criterion->apply($this->model);
+        }
+        return $this;
+
     }
 
     protected function getModelClass()
@@ -54,12 +66,19 @@ abstract class BaseRepository implements IBase
     public function update($id, array $data)
     {
         $record = $this->find($id);
-        return $record->update($data);
+        $record->update($data);
+        return $record;
     }
 
     public function delete($id)
     {
         $record = $this->find($id);
         return $record->delete();
+    }
+
+    public function forceFill(array $data, $id)
+    {
+        $record = $this->find($id);
+        $record->forceFill($data)->save();
     }
 }

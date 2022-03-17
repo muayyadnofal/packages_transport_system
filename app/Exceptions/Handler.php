@@ -2,11 +2,16 @@
 
 namespace App\Exceptions;
 
+use App\Traits\HttpResponse;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
 {
+    use HttpResponse;
     /**
      * A list of the exception types that are not reported.
      *
@@ -34,8 +39,12 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $this->reportable(function (Throwable $e) {
-            //
+        $this->renderable(function (AccessDeniedHttpException $e, $request) {
+            return self::failure('this action is not authorized', 403);
+        });
+
+        $this->renderable(function (NotFoundHttpException $e, $request) {
+            return self::failure('not found', 404);
         });
     }
 }

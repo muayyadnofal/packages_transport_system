@@ -8,6 +8,8 @@ use App\Http\Requests\Auth\VerifyRequest;
 use App\Models\Sender;
 use App\Models\Traveler;
 use App\Models\User;
+use App\Repositories\Contracts\ISender;
+use App\Repositories\Contracts\ITraveler;
 use App\Traits\HttpResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
@@ -15,6 +17,14 @@ use Illuminate\Support\Facades\URL;
 class VerificationController extends Controller
 {
     use HttpResponse;
+
+    private $traveler, $sender;
+
+    public function __construct(ISender $sender, ITraveler $traveler)
+    {
+        $this->sender = $sender;
+        $this->traveler = $traveler;
+    }
 
     private $mailRequest, $verifyRequest;
 
@@ -52,27 +62,16 @@ class VerificationController extends Controller
         return self::success('user verified successfully', 200);
     }
 
+    // resent email verification link
     public function resend(MailRequest $request, $type): \Illuminate\Http\Response
     {
-        $this->mailRequest = $request;
-
+        $user = [];
         if ($type == 'traveler') {
-            return $this->resendEmail(Traveler::class);
+            $user = $this->traveler->findWhereFirst('email', $request->email);
         }
 
         else if ($type == 'sender') {
-            return $this->resendEmail(Sender::class);
-        }
-
-        return self::failure('page not found', 404);
-    }
-
-    // resent email verification link
-    private function resendEmail($model): \Illuminate\Http\Response
-    {
-        $user = $model::where('email', $this->mailRequest->email)->first();
-        if(! $user) {
-            return self::failure('no user could be found with this email address', 422);
+            $user = $this->sender->findWhereFirst('email', $request->email);
         }
 
         // check if user has already verified his Email

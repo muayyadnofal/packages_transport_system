@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Auth;
+namespace App\Http\Requests\Sender;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class MailRequest extends FormRequest
+class ReqRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -14,7 +14,7 @@ class MailRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|email'
+            'full_weight' => 'required|integer',
         ];
     }
 }

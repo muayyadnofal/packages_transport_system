@@ -29,13 +29,13 @@ class Sender extends Auth
         return $this->morphOne(Image::class, 'imageable');
     }
 
+    public function notifications(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(Notification::class, 'notifiable');
+    }
+
     public function sendEmailVerificationNotification()
     {
         $this->notify(new VerifySenderEmail());
-    }
-
-    public function getFacadeAccessor()
-    {
-        return 'sender.password';
     }
 }
