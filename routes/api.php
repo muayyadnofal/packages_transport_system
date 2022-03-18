@@ -30,7 +30,7 @@ Route::group(['middleware' => ['auth.guard:admin', 'protected']], function() {
     // flights
     Route::get('/admin/getFlights', [FlightController::class, 'index']);
     Route::get('/admin/filterFlights', [FlightController::class, 'applyFilters']);
-    Route::delete('/admin/filterFlights', [\App\Http\Controllers\Admin\FlightController::class, 'destroy']);
+    Route::delete('/admin/deleteFlight/{id}', [\App\Http\Controllers\Admin\FlightController::class, 'destroy']);
 
     // requests
     Route::get('/admin/getRequests', [RequestController::class, 'index']);

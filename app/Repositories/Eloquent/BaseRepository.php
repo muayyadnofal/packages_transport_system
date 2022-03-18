@@ -79,6 +79,6 @@ abstract class BaseRepository implements IBase, ICriteria
     public function forceFill(array $data, $id)
     {
         $record = $this->find($id);
-        $record->forceFill($data)->save();
+        return $record->forceFill($data)->save();
     }
 }

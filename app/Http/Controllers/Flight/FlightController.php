@@ -56,15 +56,20 @@ class FlightController extends Controller
     // update flight info
     public function update(Request $request, $id): \Illuminate\Http\Response
     {
+        $senders = [];
         $flight = $this->flight->find($id);
         $requests = $this->req->findWhere('flight_id', $id);
         $this->authorize('update', $flight);
         $flight = $this->flight->update($id, $request->all());
 
+        foreach ($requests as $req) {
+            $senders = $this->sender->findWhere('id', $req->sender_id);
+        }
+
         $notification_data = ['content' => 'the flight you requested has been updated'];
 
-        foreach ($requests as $req) {
-            $this->sender->sendNotification($req->sender_id, $notification_data);
+        foreach ($senders as $sender) {
+            $this->sender->sendNotification($sender->id, $notification_data);
         }
         return self::returnData('flight', new FlightResource($flight), 'flight updated', 200);
     }
@@ -74,14 +79,21 @@ class FlightController extends Controller
     {
         $flight = $this->flight->find($id);
         $requests = $this->req->findWhere('flight_id', $id);
+        $senders = [];
+
         $this->authorize('delete', $flight);
-        $this->flight->delete($id);
+
+        foreach ($requests as $req) {
+            $senders = $this->sender->findWhere('id', $req->sender_id);
+        }
 
         $notification_data = ['content' => 'the flight you requested has been deleted'];
 
-        foreach ($requests as $req) {
-            $this->sender->sendNotification($req->sender_id, $notification_data);
+        foreach ($senders as $sender) {
+            $this->sender->sendNotification($sender->id, $notification_data);
         }
+        $this->flight->delete($id);
+
         return self::success('flight deleted successfully', 200);
     }
 }

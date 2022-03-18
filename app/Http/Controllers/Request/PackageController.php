@@ -48,7 +48,6 @@ class PackageController extends Controller
         $data = array_merge($request->all(), ['request_id' => $req->id]);
         $package = $this->package->create($data);
         $this->req->forceFill(['full_weight' => ($req->full_weight + $request->weight)], $id);
-        $traveler->userNotifications()->create(['content' => 'new request added to your flight']);
         return self::returnData('package', new PackageResource($package), '$package created', 201);
     }
 }

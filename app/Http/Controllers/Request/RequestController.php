@@ -17,13 +17,14 @@ class RequestController extends Controller
 {
     use HttpResponse;
 
-    protected $req, $flight, $traveler;
+    protected $req, $flight, $traveler, $sender;
 
-    public function __construct(IRequest $req, IFlight $flight, ITraveler $sender)
+    public function __construct(IRequest $req, IFlight $flight, ITraveler $traveler, ISender $sender)
     {
         $this->req = $req;
         $this->flight = $flight;
-        $this->traveler = $sender;
+        $this->traveler = $traveler;
+        $this->sender = $sender;
     }
 
     // get all system requests
@@ -68,6 +69,9 @@ class RequestController extends Controller
     public function create($id): \Illuminate\Http\Response
     {
         $req = $this->flight->createRequest($id);
+        $flight = $this->flight->find($req->request_id);
+        $traveler = $this->traveler->find($flight->traveler_id);
+        $traveler->userNotifications()->create(['content' => 'new request added to your flight']);
         return self::returnData('$request', new ReqResource($req), '$request created', 201);
     }
 
@@ -103,6 +107,7 @@ class RequestController extends Controller
         $notification_data = ['content' => "{$traveler->name} changed his request status to fail"];
         $this->req->forceFill(['status' => 'fail'], $req->id);
         $this->traveler->sendNotification($traveler->id, $notification_data);
+        $this->req->forceFill(['Fail_Time' => Carbon::now()], $req->id);
 
         if ($request->status == 'fail' && $req->status == 'in process') {
             $this->flight->modifyFlightFreeAmount($req);
@@ -112,21 +117,23 @@ class RequestController extends Controller
         return self::success('request failed', 200);
     }
 
-    public function changeRequestStatusTraveler(ChangeStatuesRequest $request, $id): \Illuminate\Http\Response
+    public function changeRequestStatusTraveler(ChangeStatuesRequest $request, $id)
     {
         $req = $this->req->find($id);
-        $flight = $this->flight->find($req->id);
+        $flight = $this->flight->find($req->flight_id);
         $this->authorize('changeRequestStatusTraveler', $flight);
+        $notification_data = ['content' => 'your request has been accepted'];
 
         if ($request->status === 'in process' && $flight->free_load_amount >= $req->full_weight) {
+            $this->req->forceFill(['Acceptance_Time' => Carbon::now()->format('Y-m-d')], $req->id);
             $this->req->forceFill(['status' => 'in process'], $req->id);
-            $this->req->forceFill(['acceptance_Time' => Carbon::now()], $req->id);
             $this->flight->forceFill(['free_load_amount' => ($flight->free_load_amount - $req->full_weight)], $flight->id);
+            $this->sender->sendNotification($req->sender_id, $notification_data);
             return self::success('request accepted', 200);
         }
 
         $this->req->forceFill(['status' => 'fail'], $req->id);
-        $this->req->forceFill(['fail_Time' => Carbon::now()], $req->id);
+        $this->req->forceFill(['Fail_Time' => Carbon::now()], $req->id);
         return self::success('request refused', 200);
     }
 }
