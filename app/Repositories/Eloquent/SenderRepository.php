@@ -11,4 +11,16 @@ class SenderRepository extends BaseRepository implements ISender
     {
         return Sender::class;
     }
+
+    public function getNotifications($id)
+    {
+        $sender = $this->find($id);
+        return $sender->userNotifications;
+    }
+
+    public function sendNotification($id, $data)
+    {
+        $sender = $this->find($id);
+        return $sender->userNotifications()->create($data);
+    }
 }

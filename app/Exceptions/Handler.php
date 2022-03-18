@@ -43,8 +43,8 @@ class Handler extends ExceptionHandler
             return self::failure('this action is unauthorized', 403);
         });
 
-        $this->renderable(function (NotFoundHttpException $e, $request) {
-            return self::failure('not found', 404);
-        });
+//        $this->renderable(function (NotFoundHttpException $e, $request) {
+//            return self::failure('not found', 404);
+//        });
     }
 }

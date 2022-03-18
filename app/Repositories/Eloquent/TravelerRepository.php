@@ -11,4 +11,16 @@ class TravelerRepository extends BaseRepository implements ITraveler
     {
         return Traveler::class;
     }
+
+    public function getNotifications($id)
+    {
+        $traveler = $this->find($id);
+        return $traveler->userNotifications;
+    }
+
+    public function sendNotification($id, $data)
+    {
+        $traveler = $this->find($id);
+        return $traveler->userNotifications()->create($data);
+    }
 }

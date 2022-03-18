@@ -24,6 +24,11 @@ class Traveler extends Auth
         'email_verified_at' => 'datetime',
     ];
 
+    public function userNotifications(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(Notification::class, 'notifiable');
+    }
+
     public function sendEmailVerificationNotification()
     {
         $this->notify(new VerifyTravelerEmail());

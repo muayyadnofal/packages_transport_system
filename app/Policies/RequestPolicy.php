@@ -38,7 +38,12 @@ class RequestPolicy
 
     public function delete(Sender $sender, Request $request): bool
     {
-        return $request->sender_id === $request->id;
+        return $request->sender_id === $sender->id;
+    }
+
+    public function changeRequestStatusSender(Sender $sender, Request $request): bool
+    {
+        return $request->sender_id === $sender->id;
     }
 
     public function restore(User $user, Request $request)

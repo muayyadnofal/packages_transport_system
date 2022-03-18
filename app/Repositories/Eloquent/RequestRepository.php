@@ -11,4 +11,9 @@ class RequestRepository extends BaseRepository implements IRequest
     {
         return Request::class;
     }
+
+    public function applyFilters()
+    {
+        return $this->model->allRequests();
+    }
 }

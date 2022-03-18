@@ -19,14 +19,6 @@ class LoginController extends Controller
 {
     use HttpResponse;
 
-    private $traveler, $sender;
-
-    public function __construct(ISender $sender, ITraveler $traveler)
-    {
-        $this->sender = $sender;
-        $this->traveler = $traveler;
-    }
-
     // login users into the system
     public function login(LoginRequest $request, $type): \Illuminate\Http\Response
     {

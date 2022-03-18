@@ -40,7 +40,7 @@ class FlightPolicy
         return $flight->traveler_id === $traveler->id;
     }
 
-    public function changeRequestStatus(Traveler $traveler, Flight $flight): bool
+    public function changeRequestStatusTraveler(Traveler $traveler, Flight $flight): bool
     {
         return $flight->traveler_id === $traveler->id;
     }

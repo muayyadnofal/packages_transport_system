@@ -2,15 +2,19 @@
 
 namespace App\Providers;
 
+use App\Repositories\Contracts\IAdmin;
 use App\Repositories\Contracts\IFlight;
 use App\Repositories\Contracts\IImage;
+use App\Repositories\Contracts\INotification;
 use App\Repositories\Contracts\IPackage;
 use App\Repositories\Contracts\IRequest;
 use App\Repositories\Contracts\IResetCodePassword;
 use App\Repositories\Contracts\ISender;
 use App\Repositories\Contracts\ITraveler;
+use App\Repositories\Eloquent\AdminRepository;
 use App\Repositories\Eloquent\FlightRepository;
 use App\Repositories\Eloquent\ImageRepository;
+use App\Repositories\Eloquent\NotificationRepository;
 use App\Repositories\Eloquent\PackageRepository;
 use App\Repositories\Eloquent\RequestRepository;
 use App\Repositories\Eloquent\ResetCodePasswordRepository;
@@ -32,7 +36,9 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(IPackage::class, PackageRepository::class);
         $this->app->bind(ISender::class, SenderRepository::class);
         $this->app->bind(ITraveler::class, TravelerRepository::class);
+        $this->app->bind(IAdmin::class, AdminRepository::class);
         $this->app->bind(IResetCodePassword::class, ResetCodePasswordRepository::class);
         $this->app->bind(IImage::class, ImageRepository::class);
+        $this->app->bind(INotification::class, NotificationRepository::class);
     }
 }
