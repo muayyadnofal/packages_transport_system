@@ -18,7 +18,7 @@ class VerifyTravelerEmail extends Notification implements ShouldQueue
         $url = URL::temporarySignedRoute(
             'verification.verifyT',
             Carbon::now()->addMinutes(60),
-            ['user' => $notifiable->id]
+            ['type' => $notifiable->id]
         );
 
         return str_replace(url('/api/verification/verify/traveler'), $appUrl, $url);

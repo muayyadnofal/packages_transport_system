@@ -14,7 +14,7 @@ use App\Traits\HttpResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 
-class VerificationController extends Controller
+class   VerificationController extends Controller
 {
     use HttpResponse;
 
@@ -45,7 +45,7 @@ class VerificationController extends Controller
         return self::success('user verified successfully', 200);
     }
 
-    public function verifySender(Request $request, Sender $user): \Illuminate\Http\Response
+    public function verifySender(Request $request, Sender $user)
     {
         // check if the url is a valid signed url
         if (! URL::hasValidSignature($request)) {

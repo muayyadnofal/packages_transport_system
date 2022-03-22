@@ -16,8 +16,8 @@ use Illuminate\Support\Facades\Route;
 
 // Route group for guests only
 Route::post('register', [RegisterController::class, 'register']);
-Route::post('verification/verify/traveler/{type}', [VerificationController::class, 'verifyTraveler'])->name('verification.verifyT');
-Route::post('verification/verify/sender/{type}', [VerificationController::class, 'verifySender'])->name('verification.verifyS');
+Route::post('verification/verify/traveler/{user}', [VerificationController::class, 'verifyTraveler'])->name('verification.verifyT');
+Route::post('verification/verify/sender/{user}', [VerificationController::class, 'verifySender'])->name('verification.verifyS');
 Route::post('verification/resend/{type}', [VerificationController::class, 'resend']);
 Route::post('login', [LoginController::class, 'login']);
 Route::post('password/email/{type}',  [ForgetPasswordController::class, 'sendResetLink']);
