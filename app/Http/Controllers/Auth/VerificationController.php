@@ -63,14 +63,14 @@ class VerificationController extends Controller
     }
 
     // resent email verification link
-    public function resend(MailRequest $request, $type): \Illuminate\Http\Response
+    public function resend(MailRequest $request): \Illuminate\Http\Response
     {
         $user = [];
-        if ($type == 'traveler') {
+        if ($request->role == 'traveler') {
             $user = $this->traveler->findWhereFirst('email', $request->email);
         }
 
-        else if ($type == 'sender') {
+        else if ($request->role == 'sender') {
             $user = $this->sender->findWhereFirst('email', $request->email);
         }
 

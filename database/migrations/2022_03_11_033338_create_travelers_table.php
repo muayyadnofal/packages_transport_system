@@ -13,7 +13,7 @@ class CreateTravelersTable extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('address');
-            $table->string('type')->default('traveler');
+            $table->string('role')->default('traveler');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

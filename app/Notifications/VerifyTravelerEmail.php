@@ -21,6 +21,6 @@ class VerifyTravelerEmail extends Notification implements ShouldQueue
             ['user' => $notifiable->id]
         );
 
-        return str_replace(url('/api'), $appUrl, $url);
+        return str_replace(url('/api/verification/verify/traveler'), $appUrl, $url);
     }
 }

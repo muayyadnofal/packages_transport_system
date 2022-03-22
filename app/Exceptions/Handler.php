@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use App\Traits\HttpResponse;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -43,8 +44,8 @@ class Handler extends ExceptionHandler
             return self::failure('this action is unauthorized', 403);
         });
 
-//        $this->renderable(function (NotFoundHttpException $e, $request) {
-//            return self::failure('not found', 404);
-//        });
+        $this->renderable(function (NotFoundHttpException $e, $request) {
+            return self::failure('not found', 404);
+        });
     }
 }

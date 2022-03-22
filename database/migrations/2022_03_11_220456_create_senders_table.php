@@ -13,7 +13,7 @@ class CreateSendersTable extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('address');
-            $table->string('type')->default('sender');
+            $table->string('role')->default('sender');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

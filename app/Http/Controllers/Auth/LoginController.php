@@ -20,17 +20,17 @@ class LoginController extends Controller
     use HttpResponse;
 
     // login users into the system
-    public function login(LoginRequest $request, $type): \Illuminate\Http\Response
+    public function login(LoginRequest $request): \Illuminate\Http\Response
     {
         $credentials = $request->all();
-        $token = Auth::guard($type)->attempt($credentials);
+        $token = Auth::guard($request->role)->attempt($credentials);
 
         if (!$token) {
-            return self::failure('invalid login details', 422);
+            return self::failure('invalid login details', 401);
         }
 
         // get user info
-        $user = Auth::guard($type)->user();
+        $user = Auth::guard($request->role)->user();
 
         //check if the user has verified his email
         if($user instanceof MustVerifyEmail && ! $user->hasVerifiedEmail()) {

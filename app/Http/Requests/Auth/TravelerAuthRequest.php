@@ -2,10 +2,9 @@
 
 namespace App\Http\Requests\Auth;
 
-use App\Rules\user\UserType;
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterRequest extends FormRequest
+class TravelerAuthRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -15,8 +14,8 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'email' => 'required|string|email|max:255|unique:travelers,email',
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255',
             'password' => 'required|string|min:8|confirmed',
             'address' => 'required',
             'role' => 'required|string'

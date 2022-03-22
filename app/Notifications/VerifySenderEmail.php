@@ -22,6 +22,6 @@ class VerifySenderEmail extends Notification implements ShouldQueue
             ['user' => $notifiable->id]
         );
 
-        return str_replace(url('/api'), $appUrl, $url);
+        return str_replace(url('/api/verification/verify/sender'), $appUrl, $url);
     }
 }

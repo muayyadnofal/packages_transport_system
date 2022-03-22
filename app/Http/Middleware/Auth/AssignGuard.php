@@ -25,7 +25,7 @@ class AssignGuard extends BaseMiddleware
             try {
                 JWTAuth::parseToken()->authenticate();
             } catch (TokenExpiredException | JWTException $e) {
-                return self::failure('Unauthenticated User', 422);
+                return self::failure('Unauthenticated User', 401);
             }
         }
         return $next($request);

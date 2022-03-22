@@ -16,6 +16,6 @@ class Protect
         if (Auth::user()) {
             return $next($request);
         }
-        return self::failure('Unauthenticated', 422);
+        return self::failure('Unauthenticated', 403);
     }
 }
