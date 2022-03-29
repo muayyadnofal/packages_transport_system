@@ -18,10 +18,10 @@ class FlightRequest extends FormRequest
         return [
             'launch_city' => 'required|string',
             'landing_city' => 'required|string',
-            'launch_day' => 'required|date_format:d/m/Y',
-            'landing_day' => 'required|date_format:d/m/Y|after:launch_day',
-            'launch_time' => "required|date_format:H:i",
-            'landing_time' => "required|date_format:H:i",
+            'launch_day' => 'required',
+            'landing_day' => 'required|after:launch_day',
+            'launch_time' => "required",
+            'landing_time' => "required",
             'full_load_amount' => 'required|integer',
             'free_load_amount' => 'required|integer',
         ];

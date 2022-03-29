@@ -16,6 +16,7 @@ class CodeCheckRequest extends FormRequest
         return [
             'code' => 'required|string|exists:reset_code_passwords',
             'password' => 'required|string|min:6|confirmed',
+            'role' => 'required',
         ];
     }
 }

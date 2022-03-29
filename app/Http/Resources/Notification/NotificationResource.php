@@ -9,7 +9,8 @@ class NotificationResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'content' => $this->content
+            'content' => $this->content,
+//            'created_at' => $this->createdAt->diffForHumans()
         ];
     }
 }

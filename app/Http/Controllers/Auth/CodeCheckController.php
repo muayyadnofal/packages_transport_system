@@ -4,9 +4,13 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\CodeCheckRequest;
+use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Models\ResetCodePassword;
 use App\Models\Sender;
 use App\Models\Traveler;
+use App\Repositories\Contracts\IResetCodePassword;
+use App\Repositories\Contracts\ISender;
+use App\Repositories\Contracts\ITraveler;
 use App\Traits\HttpResponse;
 use Illuminate\Http\Request;
 
@@ -16,25 +20,17 @@ class CodeCheckController extends Controller
 
     private $request;
 
-    public function check(CodeCheckRequest $request, $type): \Illuminate\Http\Response
+    public function __construct(ISender $sender, ITraveler $traveler, IResetCodePassword $reset)
     {
-        $this->request = $request;
-
-        if ($type == 'sender') {
-            return $this->checkForUser(Sender::class);
-        }
-
-        else if ($type == 'traveler') {
-            return $this->checkForUser(Traveler::class);
-        }
-
-        return self::failure('page not found', 404);
+        $this->sender = $sender;
+        $this->traveler = $traveler;
+        $this->reset = $reset;
     }
 
-    private function checkForUser($model): \Illuminate\Http\Response
+    public function check(CodeCheckRequest $request): \Illuminate\Http\Response
     {
         // find the code
-        $passwordReset = ResetCodePassword::where('code', $this->request->code)->first();
+        $passwordReset = $this->reset->findWhereFirst('code', $request->code);
 
         // check if it does not expire: the time is one hour
         if ($passwordReset->created_at > now()->addHour()) {
@@ -43,10 +39,16 @@ class CodeCheckController extends Controller
         }
 
         // find user's email
-        $user = $model::where('email', $passwordReset->email)->first();
+        if ($request->role == 'sender') {
+            $user = $this->sender->findWhereFirst('email', $passwordReset->email);
+        }
+
+        if ($request->role == 'traveler') {
+            $user = $this->traveler->findWhereFirst('email', $passwordReset->email);
+        }
 
         // update user password
-        $user->forceFill(['password' => bcrypt($this->request->password)])->save();
+        $user->forceFill(['password' => bcrypt($request->password)])->save();
 
         // delete current code
         $passwordReset->delete();

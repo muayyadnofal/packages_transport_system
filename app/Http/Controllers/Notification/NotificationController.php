@@ -27,11 +27,11 @@ class NotificationController extends Controller
         $user = auth()->user();
         $id = $user->id;
 
-        if ($user->type == 'sender') {
+        if ($user->role == 'sender') {
             $notifications = $this->sender->getNotifications($id);
         }
 
-        if ($user->type == 'traveler') {
+        if ($user->role == 'traveler') {
             $notifications = $this->traveler->getNotifications($id);
         }
 

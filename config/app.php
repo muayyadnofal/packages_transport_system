@@ -53,7 +53,8 @@ return [
     */
 
     'url' => env('APP_URL', 'http://localhost'),
-    'client_url' => env('CLIENT_URL', 'http://localhost'),
+    'client_sender_url' => env('CLIENT_SENDER_URL', 'http://localhost'),
+    'client_traveler_url' => env('CLIENT_TRAVELER_URL', 'http://localhost'),
     'asset_url' => env('ASSET_URL', null),
 
     /*

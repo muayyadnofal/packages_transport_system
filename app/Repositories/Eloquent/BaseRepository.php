@@ -40,7 +40,7 @@ abstract class BaseRepository implements IBase, ICriteria
 
     public function all()
     {
-        return $this->model->all();
+        return $this->model->get();
     }
 
     public function find($id)

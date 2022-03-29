@@ -45,7 +45,7 @@ class   VerificationController extends Controller
         return self::success('user verified successfully', 200);
     }
 
-    public function verifySender(Request $request, Sender $user)
+    public function verifySender(Request $request, Sender $user): \Illuminate\Http\Response
     {
         // check if the url is a valid signed url
         if (! URL::hasValidSignature($request)) {

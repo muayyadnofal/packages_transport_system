@@ -22,8 +22,8 @@ class FlightRepository extends BaseRepository implements IFlight
     public function createRequest($id)
     {
         $flight = $this->find($id);
-        $sender = auth()->user()->id;
-        $data = ['sender_id' => $sender];
+        $sender_id = auth()->user()->id;
+        $data = ['sender_id' => $sender_id, 'status' => 'waiting'];
         return $flight->requests()->create($data);
     }
 

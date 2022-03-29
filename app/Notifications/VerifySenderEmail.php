@@ -13,7 +13,7 @@ class VerifySenderEmail extends Notification implements ShouldQueue
     use Queueable;
 
     protected function verificationUrl($notifiable) {
-        $appUrl = config('app.client_url', config('app.url'));
+        $appUrl = config('app.client_sender_url', config('app.url'));
 
         $url = URL::temporarySignedRoute(
             'verification.verifyS',

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Flight;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Traveler\FlightRequest;
+use App\Http\Resources\Admin\AdminFlightResource;
 use App\Http\Resources\Traveler\FlightResource;
 use App\Repositories\Contracts\IFlight;
 use App\Repositories\Contracts\IRequest;
@@ -28,7 +29,7 @@ class FlightController extends Controller
     public function index(): \Illuminate\Http\Response
     {
         $flights = $this->flight->all();
-        return self::returnData('flights', FlightResource::collection($flights), 'all flights', 200);
+        return self::returnData('flights', AdminFlightResource::collection($flights), 'all flights', 200);
     }
 
     // search flights by its landing/launch city
@@ -43,6 +44,13 @@ class FlightController extends Controller
     {
         $flights = $this->flight->findWhere('traveler_id', auth()->user()->id);
         return self::returnData('flights', FlightResource::collection($flights), 'all flights', 200);
+    }
+
+    // get flight
+    public function getFlight($id): \Illuminate\Http\Response
+    {
+        $flight = $this->flight->findWhereFirst('id', $id);
+        return self::returnData('flight', new FlightResource($flight), 'flight', 200);
     }
 
     // create a flight

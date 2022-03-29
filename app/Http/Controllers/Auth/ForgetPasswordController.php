@@ -30,13 +30,13 @@ class ForgetPasswordController extends Controller
         $this->reset = $reset;
     }
 
-    public function sendResetLink(MailRequest $request, $type): \Illuminate\Http\Response
+    public function sendResetLink(MailRequest $request): \Illuminate\Http\Response
     {
-        if($type == 'traveler') {
+        if($request->role == 'traveler') {
             $this->traveler->findWhereFirst('email', $request->all());
         }
 
-        else if($type == 'sender') {
+        else if($request->role == 'sender') {
             $this->sender->findWhereFirst('email', $request->all());
         }
 

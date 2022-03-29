@@ -16,4 +16,12 @@ class RequestRepository extends BaseRepository implements IRequest
     {
         return $this->model->allRequests();
     }
+
+    public function deleteEmptyRequests() {
+        foreach ($this->all() as $request) {
+            if (count($request->packages) == 0) {
+                $request->delete();
+            }
+        }
+    }
 }

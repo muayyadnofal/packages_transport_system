@@ -12,11 +12,12 @@ class UserResource extends JsonResource
         $image = new UserImage();
 
         return [
-            'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
             'address' => $this->address,
-            'image' => $image->getImage($this->id, $this->type)
+            'role' => $this->role,
+            'signed_at' => $this->created_at->diffForHumans(),
+            'image' => $image->getImage($this->id, $this->role)
         ];
     }
 }

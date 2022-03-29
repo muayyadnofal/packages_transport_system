@@ -13,12 +13,12 @@ class VerifyTravelerEmail extends Notification implements ShouldQueue
     use Queueable;
 
     protected function verificationUrl($notifiable) {
-        $appUrl = config('app.client_url', config('app.url'));
+        $appUrl = config('app.client_traveler_url', config('app.url'));
 
         $url = URL::temporarySignedRoute(
             'verification.verifyT',
             Carbon::now()->addMinutes(60),
-            ['type' => $notifiable->id]
+            ['user' => $notifiable->id]
         );
 
         return str_replace(url('/api/verification/verify/traveler'), $appUrl, $url);

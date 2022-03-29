@@ -35,7 +35,7 @@ class PackageController extends Controller
         return self::returnData('packages', PackageResource::collection($requests), 'all packages', 200);
     }
 
-    public function create(PackageRequest $request, $id)
+    public function create(PackageRequest $request, $id): \Illuminate\Http\Response
     {
         $req = $this->req->find($id);
         $flight = $this->flight->find($req->flight_id);
@@ -48,6 +48,6 @@ class PackageController extends Controller
         $data = array_merge($request->all(), ['request_id' => $req->id]);
         $package = $this->package->create($data);
         $this->req->forceFill(['full_weight' => ($req->full_weight + $request->weight)], $id);
-        return self::returnData('package', new PackageResource($package), '$package created', 201);
+        return self::returnData('package', new PackageResource($package), 'request added successfully', 201);
     }
 }

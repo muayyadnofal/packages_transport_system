@@ -30,6 +30,7 @@ class RequestController extends Controller
     // get all system requests
     public function index(): \Illuminate\Http\Response
     {
+        $this->req->deleteEmptyRequests();
         $requests = $this->req->all();
         return self::returnData('requests', ReqResource::collection($requests), 'all requests', 200);
     }
@@ -37,6 +38,7 @@ class RequestController extends Controller
     // get requests for a sender
     public function getMyRequests(): \Illuminate\Http\Response
     {
+        $this->req->deleteEmptyRequests();
         $requests = $this->req->findWhere('sender_id', auth()->user()->id);
         return self::returnData('requests', ReqResource::collection($requests), 'all requests', 200);
     }
@@ -44,6 +46,7 @@ class RequestController extends Controller
     // get a request for a sender
     public function getRequestSender($id): \Illuminate\Http\Response
     {
+        $this->req->deleteEmptyRequests();
         $req = $this->req->find($id);
         $this->authorize('getOne', $req);
         return self::returnData('request', new ReqResource($req), 'flight request', 200);
@@ -52,6 +55,7 @@ class RequestController extends Controller
     // get a request for a traveler
     public function getRequestTraveler($id): \Illuminate\Http\Response
     {
+        $this->req->deleteEmptyRequests();
         $req = $this->req->find($id);
         $flight = $this->flight->find($req->id);
         $this->authorize('getRequest', $flight);
@@ -61,6 +65,7 @@ class RequestController extends Controller
     // search to a request by full_weight and status
     public function applyFilters(): \Illuminate\Http\Response
     {
+        $this->req->deleteEmptyRequests();
         $requests = $this->req->applyFilters();
         return self::returnData('requests', ReqResource::collection($requests), 'all requests', 200);
     }
@@ -69,15 +74,16 @@ class RequestController extends Controller
     public function create($id): \Illuminate\Http\Response
     {
         $req = $this->flight->createRequest($id);
-        $flight = $this->flight->find($req->request_id);
+        $flight = $this->flight->find($id);
         $traveler = $this->traveler->find($flight->traveler_id);
         $traveler->userNotifications()->create(['content' => 'new request added to your flight']);
-        return self::returnData('$request', new ReqResource($req), '$request created', 201);
+        return self::returnData('request', new ReqResource($req), 'request created', 201);
     }
 
     // get traveler flight requests
     public function getMyFlightRequests($id): \Illuminate\Http\Response
     {
+        $this->req->deleteEmptyRequests();
         $flight = $this->flight->find($id);
         $this->authorize('getMyFlightRequests', $flight);
         $requests = $this->req->findWhere('flight_id', $flight->id);
@@ -97,7 +103,7 @@ class RequestController extends Controller
         return self::success('request deleted successfully', 200);
     }
 
-    public function changeRequestStatusSender(ChangeStatuesRequest $request, $id): \Illuminate\Http\Response
+    public function changeRequestStatusSender($id): \Illuminate\Http\Response
     {
         $req = $this->req->find($id);
         $this->authorize('changeRequestStatusSender', $req);
@@ -109,7 +115,7 @@ class RequestController extends Controller
         $this->traveler->sendNotification($traveler->id, $notification_data);
         $this->req->forceFill(['Fail_Time' => Carbon::now()], $req->id);
 
-        if ($request->status == 'fail' && $req->status == 'in process') {
+        if ($req->status == 'in process') {
             $this->flight->modifyFlightFreeAmount($req);
             return self::success('request failed', 200);
         }
@@ -117,7 +123,7 @@ class RequestController extends Controller
         return self::success('request failed', 200);
     }
 
-    public function changeRequestStatusTraveler(ChangeStatuesRequest $request, $id)
+    public function changeRequestStatusTraveler(ChangeStatuesRequest $request, $id): \Illuminate\Http\Response
     {
         $req = $this->req->find($id);
         $flight = $this->flight->find($req->flight_id);
@@ -130,6 +136,15 @@ class RequestController extends Controller
             $this->flight->forceFill(['free_load_amount' => ($flight->free_load_amount - $req->full_weight)], $flight->id);
             $this->sender->sendNotification($req->sender_id, $notification_data);
             return self::success('request accepted', 200);
+        }
+
+        else if ($req->status === 'in process' && $request->status === 'fail') {
+            $notification_data = ['content' => 'your request has been refused'];
+            $this->req->forceFill(['Fail_Time' => Carbon::now()->format('Y-m-d')], $req->id);
+            $this->req->forceFill(['status' => 'fail'], $req->id);
+            $this->flight->forceFill(['free_load_amount' => ($flight->free_load_amount + $req->full_weight)], $flight->id);
+            $this->sender->sendNotification($req->sender_id, $notification_data);
+            return self::success('request refused', 200);
         }
 
         $this->req->forceFill(['status' => 'fail'], $req->id);

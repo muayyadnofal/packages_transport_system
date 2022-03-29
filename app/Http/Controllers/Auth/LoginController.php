@@ -26,7 +26,7 @@ class LoginController extends Controller
         $token = Auth::guard($request->role)->attempt($credentials);
 
         if (!$token) {
-            return self::failure('invalid login details', 401);
+            return self::failure('invalid login details', 422);
         }
 
         // get user info

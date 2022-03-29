@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Http\Resources\Traveler;
+namespace App\Http\Resources\Admin;
 
-use App\Http\Resources\Admin\AdminRequestResource;
 use App\Http\Resources\Sender\ReqResource;
 use App\Http\Resources\User\UserResource;
 use App\Models\Traveler;
 use App\Repositories\Eloquent\RequestRepository;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class FlightResource extends JsonResource
+class AdminFlightResource extends JsonResource
 {
     public function toArray($request)
     {
@@ -29,9 +28,8 @@ class FlightResource extends JsonResource
             'full_load_amount' => $this->full_load_amount,
             'free_load_amount' => $this->free_load_amount,
             'created_at' => $this->created_at->diffForHumans(),
-            'requests' => AdminRequestResource::collection($req->findWhere('flight_id', $this->id)),
             'traveler' => new UserResource($traveler),
-//            'requests' => ReqResource::collection($req->findWhere('flight_id', $this->id))
+            'requests' => AdminRequestResource::collection($req->findWhere('flight_id', $this->id))
         ];
     }
 }
